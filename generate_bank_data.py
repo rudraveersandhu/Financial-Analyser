@@ -32,7 +32,7 @@ random.seed(42)
 START = datetime.date(2023, 1, 1)
 END = datetime.date(2026, 6, 30)
 
-OUT_PATH = "/home/claude/bank_transactions_dummy.csv"
+OUT_PATH = "data/bank_transactions_dummy.csv"
 
 # ----------------------------------------------------------------------
 # Reference number / masking helpers
