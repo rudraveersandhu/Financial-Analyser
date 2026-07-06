@@ -90,9 +90,24 @@ def load_transactions(path: str) -> pd.DataFrame:
     # Only one of withdrawal/deposit is ever populated per row, so this
     # collapses them into a single signed number: negative = spend.
     df["amount"] = df["deposit"] - df["withdrawal"]
-    df["direction"] = df["amount"].apply(lambda x: "credit" if x >= 0 else "debit")
 
+    # The apply function is like running a function on every value in this column.
+    df["direction"] = df["amount"].apply(
+        lambda x: "credit" if x >= 0 else "debit"
+        # This is like instead of creating a separate function, its written in an inline way.
+        # SO basically this ilmbda x is an inline way of saying this :
+        # def check_direction(x):
+        #     if x >= 0:
+        #         return "credit"
+        #     else:
+        #         return "debit"
+    )
+
+    # Sorts the data by the date column. since that will cause the index values to be
+    # unordered so the "reset_index(drop=True)" resets the indexes and give new ordered
+    # index values to the new sorted table/dataframe entries:
     df = df.sort_values("date").reset_index(drop=True)
+
     df["month"] = df["date"].dt.to_period("M").astype(str)
 
     return df[TIDY_COLUMNS]
@@ -126,8 +141,8 @@ def load_transactions(path: str) -> pd.DataFrame:
                            Drop rows with invalid dates
                                         │
                                         ▼
-                            Create a signed amount
-                               (+credit, −debit)
+                              Create a signed amount
+                                (+credit, −debit)
                                         │
                                         ▼
                          Label each transaction as credit/debit
