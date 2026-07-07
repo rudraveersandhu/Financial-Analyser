@@ -108,7 +108,10 @@ def load_transactions(path: str) -> pd.DataFrame:
     # index values to the new sorted table/dataframe entries:
     df = df.sort_values("date").reset_index(drop=True)
 
-    df["month"] = df["date"].dt.to_period("M").astype(str)
+    df["month"] = (df["date"].dt.to_period("M") # It converts "2026-07-01" to "2026-07"
+                   .astype(str)) #The result of to_period("M") is a special pandas Period object, not a plain string.
+
+    # Return a clean, standardized DataFrame
 
     return df[TIDY_COLUMNS]
 

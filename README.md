@@ -1,9 +1,16 @@
 # Personal Finance Analyzer
 
-> Phase 1 of the *Flutter → AI Engineer* playbook. A Python CLI + Jupyter
-> analysis that ingests a raw bank/UPI transaction CSV, categorizes every
-> transaction with keyword rules, computes monthly spend by category, flags
-> statistical outliers, and exports a multi-page PDF report.
+> A Python CLI + Jupyter analysis that ingests a raw bank/UPI transaction CSV,
+> categorizes every transaction with keyword rules, computes monthly spend by
+> category, flags statistical outliers, and exports a multi-page PDF report.
+
+**About this project.** I'm a Flutter developer transitioning into AI/ML
+engineering, and I'm building in public — one real, end-to-end project at a
+time. This is the first. Beyond being a genuinely useful tool, it's where I
+picked up Pandas, clean Python module structure, and the notebook-to-script
+workflow. I've written this README to double as a walkthrough, so anyone
+making the same mobile-dev → data/ML jump can follow the reasoning, not just
+the code. Feedback and questions are very welcome.
 
 Hand it a CSV, run one command, get a report:
 
@@ -46,14 +53,14 @@ There are two front doors to the exact same logic:
 - **`analyze.ipynb`** — the *lab*. Explore, plot, sanity-check the rules interactively.
 - **`finance.py`** — the *product*. One command, reproducible output, shareable PDF.
 
-That split (notebook to explore, script to ship) is the single most
-important workflow habit in this whole phase. More on it in §3 and §9.
+That split — notebook to explore, script to ship — is, in my view, the single
+most important workflow habit for this kind of data work. More on it in §3 and §9.
 
 ---
 
 ## 2. Quickstart
 
-**Prerequisites:** [uv](https://docs.astral.sh/uv/) and Python 3.11 (per the playbook setup).
+**Prerequisites:** [uv](https://docs.astral.sh/uv/) and Python 3.11.
 
 ```bash
 # 1. install dependencies into a local .venv (uv reads pyproject.toml)
@@ -158,8 +165,9 @@ bottom, first match wins. `"SWIGGY"` in the narration → `Food Delivery`.
 Why rules and not machine learning? Because for structured, repetitive
 narrations, a dozen keyword rules hit ~95% accuracy in an afternoon; a
 classifier would need labeled data, training, and evaluation to do *worse*
-at this stage. **Reach for ML when rules stop scaling — not before.** (Later
-phases of the playbook are exactly about knowing when that line is crossed.)
+at this stage. **Reach for ML when rules stop scaling — not before.** (Knowing
+*when* that line is crossed is a skill in itself, and the next project is where
+I get to it.)
 
 Order matters: specific rules come first, and the generic `"UPI-"` catch-all
 is dead last so it only sweeps up transfers nothing else claimed. There's
@@ -168,8 +176,8 @@ the narration to power the "top merchants" chart.
 
 ### `analyzer/statistics.py` — the aggregations
 
-Pure functions over the tidy DataFrame. This is where the Pandas verbs from
-the playbook live:
+Pure functions over the tidy DataFrame. This is where the core Pandas verbs
+live:
 
 - `monthly_category_spend()` → a **pivot table** (rows = month, cols = category).
 - `top_merchants()` → **groupby + agg + sort + head**.
@@ -217,8 +225,8 @@ the whole game — see next section.
 
 ## 6. Pandas concepts you'll use forever
 
-The playbook calls groupby / merge / pivot "the moves you'll use forever."
-Here's what they mean, grounded in this project.
+groupby / merge / pivot are the moves you'll reach for in almost every data
+task. Here's what they mean, grounded in this project.
 
 **Vectorized thinking (the #1 mindset shift).** In Dart you'd loop:
 `for (var t in txns) { total += t.amount; }`. In Pandas you operate on the
@@ -290,16 +298,17 @@ reproduces the exact traps you'll hit with a real statement:
 | Unparseable / junk rows | one bad row crashes the whole run | `errors="coerce"` → `NaN`, then log-and-drop |
 | No category column at all | (that's the whole project) | infer from free-text narration |
 
-**This is a great blog-post bug.** The playbook asks you to write up one hard
-bug per phase — the `dayfirst`/BOM/`errors="coerce"` cluster is the honest
-answer: your totals look plausible but *wrong*, and the fix is understanding
-that clean-looking data can be silently mis-parsed.
+**The bug that taught me the most** was this cluster — `dayfirst` / BOM /
+`errors="coerce"`. The totals looked completely plausible and were *wrong*,
+because clean-*looking* data was being silently mis-parsed (US-format dates,
+a BOM on the header, junk rows). If you take one thing from this project:
+validate that your parsed data matches reality before you trust a single number.
 
 ---
 
 ## 9. How to *think* about a project like this
 
-A reusable approach you can carry into every later phase:
+A reusable approach you can carry into any data or ML project:
 
 1. **Understand the data before writing logic.** Open the CSV, read 20 rows,
    find what's weird. Ten minutes here saves hours of debugging phantom bugs
@@ -354,6 +363,8 @@ The full report (`--report`) adds a summary page and an outlier table.
 
 ---
 
-*Built as Phase 1 of a Flutter → AI Engineer transition. The point of this
-one isn't the finance — it's Pandas fluency, clean module structure, and the
-notebook-to-script workflow you'll lean on for every project after.*
+*Built as the first project in my Flutter → AI/ML engineering transition. The
+real point of it isn't the finance — it's Pandas fluency, clean module
+structure, and the notebook-to-script workflow that carry over to every data
+project after. If you're making a similar jump, I hope the walkthrough above
+saves you some time — and if you spot something I could do better, tell me.*

@@ -62,7 +62,6 @@ def categorize(narration: str) -> str:
 
 def extract_merchant(narration: str) -> str:
     """Best-effort merchant/counterparty name pulled from the narration text.
-
     This is intentionally simple and won't be perfect (e.g. ACH mandates are
     truncated) -- real narration parsing is an ongoing refinement job, not a
     one-shot function. Good enough here to power a "top merchants" chart.
